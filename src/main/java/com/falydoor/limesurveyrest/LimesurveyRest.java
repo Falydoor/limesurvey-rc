@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public class LimesurveyRest {
 
@@ -90,20 +90,20 @@ public class LimesurveyRest {
 
     public Stream<LsQuestionGroup> getGroups(int surveyId) throws LimesurveyRestException {
         JsonElement result = callApi(new LsApiBody("list_groups", getParamsWithKey(surveyId)));
+        List<LsQuestionGroup> questionGroups = gson.fromJson(result, new TypeToken<List<LsQuestionGroup>>() {
+        }.getType());
 
-        return StreamSupport.stream(result.getAsJsonArray().spliterator(), false)
-                .map(group -> gson.fromJson(group, LsQuestionGroup.class))
-                .sorted(Comparator.comparing(LsQuestionGroup::getOrder));
+        return questionGroups.stream().sorted(Comparator.comparing(LsQuestionGroup::getOrder));
     }
 
     public Stream<LsQuestion> getQuestionsFromGroup(int surveyId, int groupId) throws LimesurveyRestException {
         LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
         params.setGroupId(groupId);
         JsonElement result = callApi(new LsApiBody("list_questions", params));
+        List<LsQuestion> questions = gson.fromJson(result, new TypeToken<List<LsQuestion>>() {
+        }.getType());
 
-        return StreamSupport.stream(result.getAsJsonArray().spliterator(), false)
-                .map(question -> gson.fromJson(question, LsQuestion.class))
-                .sorted(Comparator.comparing(LsQuestion::getOrder));
+        return questions.stream().sorted(Comparator.comparing(LsQuestion::getOrder));
     }
 
     public boolean isSurveyActive(int surveyId) throws LimesurveyRestException {
@@ -124,8 +124,11 @@ public class LimesurveyRest {
     }
 
     public Stream<LsSurvey> getSurveys() throws LimesurveyRestException {
-        return StreamSupport.stream(callApi(new LsApiBody("list_surveys", getParamsWithKey())).getAsJsonArray().spliterator(), false)
-                .map(survey -> gson.fromJson(survey, LsSurvey.class));
+        JsonElement result = callApi(new LsApiBody("list_surveys", getParamsWithKey()));
+        List<LsSurvey> surveys = gson.fromJson(result, new TypeToken<List<LsSurvey>>() {
+        }.getType());
+
+        return surveys.stream();
     }
 
     public LsSurveyLanguage getSurveyLanguageProperties(int surveyId) throws LimesurveyRestException {
