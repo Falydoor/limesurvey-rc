@@ -1,6 +1,8 @@
 package com.falydoor.limesurveyrest;
 
 import com.falydoor.limesurveyrest.dto.*;
+import com.falydoor.limesurveyrest.dto.json.LocalDateDeserializer;
+import com.falydoor.limesurveyrest.dto.json.LsQuestionDeserializer;
 import com.falydoor.limesurveyrest.dto.json.LsSurveyDeserializer;
 import com.falydoor.limesurveyrest.exception.LimesurveyRestException;
 import com.google.gson.Gson;
@@ -18,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -46,7 +49,11 @@ public class LimesurveyRest {
         this.url = url;
         this.user = user;
         this.password = password;
-        this.gson = new GsonBuilder().registerTypeAdapter(LsSurvey.class, new LsSurveyDeserializer()).create();
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
+                .registerTypeAdapter(LsSurvey.class, new LsSurveyDeserializer())
+                .registerTypeAdapter(LsQuestion.class, new LsQuestionDeserializer())
+                .create();
     }
 
     public void setKeyTimeout(int timeout) {

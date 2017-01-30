@@ -18,6 +18,33 @@ public class LsQuestion {
 
     private String relevance;
 
+    @SerializedName("gid")
+    private int parentGroupId;
+
+    @SerializedName("sid")
+    private int surveyId;
+
+    private String title;
+
+    private String preg;
+
+    private String help;
+
+    private boolean other;
+
+    private boolean mandatory;
+
+    private String language;
+
+    @SerializedName("scale_id")
+    private int scaleId;
+
+    @SerializedName("same_default")
+    private int sameDefault;
+
+    @SerializedName("modulename")
+    private String moduleName;
+
     public String getQuestion() {
         return question;
     }
@@ -66,6 +93,94 @@ public class LsQuestion {
         this.relevance = relevance;
     }
 
+    public int getParentGroupId() {
+        return parentGroupId;
+    }
+
+    public void setParentGroupId(int parentGroupId) {
+        this.parentGroupId = parentGroupId;
+    }
+
+    public int getSurveyId() {
+        return surveyId;
+    }
+
+    public void setSurveyId(int surveyId) {
+        this.surveyId = surveyId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPreg() {
+        return preg;
+    }
+
+    public void setPreg(String preg) {
+        this.preg = preg;
+    }
+
+    public String getHelp() {
+        return help;
+    }
+
+    public void setHelp(String help) {
+        this.help = help;
+    }
+
+    public boolean isOther() {
+        return other;
+    }
+
+    public void setOther(boolean other) {
+        this.other = other;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public int getScaleId() {
+        return scaleId;
+    }
+
+    public void setScaleId(int scaleId) {
+        this.scaleId = scaleId;
+    }
+
+    public int getSameDefault() {
+        return sameDefault;
+    }
+
+    public void setSameDefault(int sameDefault) {
+        this.sameDefault = sameDefault;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
     @Override
     public String toString() {
         return "LsQuestion{" +
@@ -75,6 +190,17 @@ public class LsQuestion {
                 ", order=" + order +
                 ", type='" + type + '\'' +
                 ", relevance='" + relevance + '\'' +
+                ", parentGroupId=" + parentGroupId +
+                ", surveyId=" + surveyId +
+                ", title='" + title + '\'' +
+                ", preg='" + preg + '\'' +
+                ", help='" + help + '\'' +
+                ", other=" + other +
+                ", mandatory=" + mandatory +
+                ", language='" + language + '\'' +
+                ", scaleId=" + scaleId +
+                ", sameDefault=" + sameDefault +
+                ", moduleName='" + moduleName + '\'' +
                 '}';
     }
 }
