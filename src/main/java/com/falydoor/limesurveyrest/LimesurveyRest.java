@@ -9,6 +9,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -17,6 +19,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class LimesurveyRest {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(LimesurveyRest.class);
 
     private String url;
 
@@ -44,10 +48,13 @@ public class LimesurveyRest {
         try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
             HttpPost post = new HttpPost(url);
             post.setHeader("Content-type", "application/json");
-            post.setEntity(new StringEntity(new Gson().toJson(limesurveyApiBody)));
+            String jsonBody = new Gson().toJson(limesurveyApiBody);
+            LOGGER.debug("API CALL JSON => " + jsonBody);
+            post.setEntity(new StringEntity(jsonBody));
             HttpResponse response = client.execute(post);
             if (response.getStatusLine().getStatusCode() == 200) {
                 String result = EntityUtils.toString(response.getEntity());
+                LOGGER.debug("API RESPONSE JSON => " + result);
                 return new JsonParser().parse(result).getAsJsonObject().get("result");
             } else {
                 throw new LimesurveyRestException("Expecting status code 200, got " + response.getStatusLine().getStatusCode() + " instead");
@@ -62,8 +69,7 @@ public class LimesurveyRest {
             try {
                 return getQuestionsFromGroup(surveyId, group.getId());
             } catch (LimesurveyRestException e) {
-                // Display in logger or find a way to raise exception in lambda
-//                LOGGER.error();
+                LOGGER.error("Unable to get questions from group " + group.getId(), e);
             }
             return Stream.empty();
         });
