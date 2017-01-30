@@ -2,7 +2,9 @@ package com.falydoor.limesurveyrest;
 
 import com.falydoor.limesurveyrest.dto.*;
 import com.falydoor.limesurveyrest.exception.LimesurveyRestException;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -14,7 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -95,8 +99,8 @@ public class LimesurveyRest {
 
     public boolean isSurveyActive(int surveyId) throws LimesurveyRestException {
         LimesurveyApiBody.LimesurveyApiParams params = getParamsWithKey(surveyId);
-        JsonArray surveySettings = new JsonArray();
-        surveySettings.add(new JsonPrimitive("active"));
+        List<String> surveySettings = new ArrayList<>();
+        surveySettings.add("active");
         params.setSurveySettings(surveySettings);
 
         return "Y".equals(callApi(new LimesurveyApiBody("get_survey_properties", params)).getAsJsonObject().get("active").getAsString());
@@ -117,9 +121,9 @@ public class LimesurveyRest {
 
     public LimesurveySurveyLanguage getSurveyLanguageProperties(int surveyId) throws LimesurveyRestException {
         LimesurveyApiBody.LimesurveyApiParams params = getParamsWithKey(surveyId);
-        JsonArray localeSettings = new JsonArray();
-        localeSettings.add(new JsonPrimitive("surveyls_welcometext"));
-        localeSettings.add(new JsonPrimitive("surveyls_endtext"));
+        List<String> localeSettings = new ArrayList<>();
+        localeSettings.add("surveyls_welcometext");
+        localeSettings.add("surveyls_endtext");
         params.setSurveyLocaleSettings(localeSettings);
 
         return new LimesurveySurveyLanguage(callApi(new LimesurveyApiBody("get_language_properties", params)));

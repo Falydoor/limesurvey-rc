@@ -1,7 +1,8 @@
 package com.falydoor.limesurveyrest.dto;
 
-import com.google.gson.JsonArray;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class LimesurveyApiBody {
     private String method;
@@ -25,16 +26,16 @@ public class LimesurveyApiBody {
         private String sessionKey;
 
         @SerializedName("iSurveyID")
-        private int surveyId;
+        private Integer surveyId;
 
         @SerializedName("iGroupID")
-        private int groupId;
+        private Integer groupId;
 
         @SerializedName("aSurveySettings")
-        private JsonArray surveySettings;
+        private List<String> surveySettings;
 
         @SerializedName("aSurveyLocaleSettings")
-        private JsonArray surveyLocaleSettings;
+        private List<String> surveyLocaleSettings;
 
         public String getUsername() {
             return username;
@@ -60,35 +61,35 @@ public class LimesurveyApiBody {
             this.sessionKey = sessionKey;
         }
 
-        public int getSurveyId() {
+        public Integer getSurveyId() {
             return surveyId;
         }
 
-        public void setSurveyId(int surveyId) {
+        public void setSurveyId(Integer surveyId) {
             this.surveyId = surveyId;
         }
 
-        public int getGroupId() {
+        public Integer getGroupId() {
             return groupId;
         }
 
-        public void setGroupId(int groupId) {
+        public void setGroupId(Integer groupId) {
             this.groupId = groupId;
         }
 
-        public JsonArray getSurveySettings() {
+        public List<String> getSurveySettings() {
             return surveySettings;
         }
 
-        public void setSurveySettings(JsonArray surveySettings) {
+        public void setSurveySettings(List<String> surveySettings) {
             this.surveySettings = surveySettings;
         }
 
-        public JsonArray getSurveyLocaleSettings() {
+        public List<String> getSurveyLocaleSettings() {
             return surveyLocaleSettings;
         }
 
-        public void setSurveyLocaleSettings(JsonArray surveyLocaleSettings) {
+        public void setSurveyLocaleSettings(List<String> surveyLocaleSettings) {
             this.surveyLocaleSettings = surveyLocaleSettings;
         }
     }
