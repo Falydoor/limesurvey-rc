@@ -2,7 +2,7 @@ package com.falydoor.limesurveyrest.dto;
 
 import com.google.gson.annotations.SerializedName;
 
-public class LimesurveySurvey {
+public class LsSurvey {
     @SerializedName("sid")
     private int id;
 
@@ -37,7 +37,7 @@ public class LimesurveySurvey {
 
     @Override
     public String toString() {
-        return "LimesurveySurvey{" +
+        return "LsSurvey{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", active=" + active +

@@ -2,7 +2,7 @@ package com.falydoor.limesurveyrest.dto;
 
 import com.google.gson.annotations.SerializedName;
 
-public class LimesurveySurveyLanguage {
+public class LsSurveyLanguage {
     @SerializedName("surveyls_welcometext")
     private String welcomeText;
 
@@ -27,7 +27,7 @@ public class LimesurveySurveyLanguage {
 
     @Override
     public String toString() {
-        return "LimesurveySurveyLanguage{" +
+        return "LsSurveyLanguage{" +
                 "welcomeText='" + welcomeText + '\'' +
                 ", endText='" + endText + '\'' +
                 '}';

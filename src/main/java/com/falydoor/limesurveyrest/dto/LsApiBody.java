@@ -4,20 +4,20 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class LimesurveyApiBody {
+public class LsApiBody {
     private String method;
 
     private int id;
 
-    private LimesurveyApiParams params;
+    private LsApiParams params;
 
-    public LimesurveyApiBody(String method, LimesurveyApiParams params) {
+    public LsApiBody(String method, LsApiParams params) {
         this.method = method;
         this.params = params;
         this.id = 1;
     }
 
-    public static class LimesurveyApiParams {
+    public static class LsApiParams {
         private String username;
 
         private String password;

@@ -2,7 +2,7 @@ package com.falydoor.limesurveyrest.dto;
 
 import com.google.gson.annotations.SerializedName;
 
-public class LimesurveyQuestion {
+public class LsQuestion {
     private String question;
 
     @SerializedName("qid")
@@ -68,7 +68,7 @@ public class LimesurveyQuestion {
 
     @Override
     public String toString() {
-        return "LimesurveyQuestion{" +
+        return "LsQuestion{" +
                 "question='" + question + '\'' +
                 ", id=" + id +
                 ", groupId=" + groupId +
