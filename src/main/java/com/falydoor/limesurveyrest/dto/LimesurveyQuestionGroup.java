@@ -1,18 +1,13 @@
 package com.falydoor.limesurveyrest.dto;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
 
 public class LimesurveyQuestionGroup {
+    @SerializedName("gid")
     private int id;
 
+    @SerializedName("group_order")
     private int order;
-
-    public LimesurveyQuestionGroup(JsonElement json) {
-        JsonObject jsonObject = json.getAsJsonObject();
-        id = jsonObject.get("gid").getAsInt();
-        order = jsonObject.get("group_order").getAsInt();
-    }
 
     public int getId() {
         return id;

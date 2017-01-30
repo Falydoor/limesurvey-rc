@@ -1,8 +1,10 @@
 package com.falydoor.limesurveyrest;
 
 import com.falydoor.limesurveyrest.dto.*;
+import com.falydoor.limesurveyrest.dto.json.LimesurveySurveyDeserializer;
 import com.falydoor.limesurveyrest.exception.LimesurveyRestException;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.apache.http.HttpResponse;
@@ -38,10 +40,13 @@ public class LimesurveyRest {
 
     private ZonedDateTime keyExpiration = ZonedDateTime.now();
 
+    private Gson gson;
+
     public LimesurveyRest(String url, String user, String password) {
         this.url = url;
         this.user = user;
         this.password = password;
+        this.gson = new GsonBuilder().registerTypeAdapter(LimesurveySurvey.class, new LimesurveySurveyDeserializer()).create();
     }
 
     public void setKeyTimeout(int timeout) {
@@ -52,7 +57,7 @@ public class LimesurveyRest {
         try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
             HttpPost post = new HttpPost(url);
             post.setHeader("Content-type", "application/json");
-            String jsonBody = new Gson().toJson(limesurveyApiBody);
+            String jsonBody = gson.toJson(limesurveyApiBody);
             LOGGER.debug("API CALL JSON => " + jsonBody);
             post.setEntity(new StringEntity(jsonBody));
             HttpResponse response = client.execute(post);
@@ -83,7 +88,7 @@ public class LimesurveyRest {
         JsonElement result = callApi(new LimesurveyApiBody("list_groups", getParamsWithKey(surveyId)));
 
         return StreamSupport.stream(result.getAsJsonArray().spliterator(), false)
-                .map(LimesurveyQuestionGroup::new)
+                .map(group -> gson.fromJson(group, LimesurveyQuestionGroup.class))
                 .sorted(Comparator.comparing(LimesurveyQuestionGroup::getOrder));
     }
 
@@ -93,7 +98,7 @@ public class LimesurveyRest {
         JsonElement result = callApi(new LimesurveyApiBody("list_questions", params));
 
         return StreamSupport.stream(result.getAsJsonArray().spliterator(), false)
-                .map(LimesurveyQuestion::new)
+                .map(question -> gson.fromJson(question, LimesurveyQuestion.class))
                 .sorted(Comparator.comparing(LimesurveyQuestion::getOrder));
     }
 
@@ -116,7 +121,7 @@ public class LimesurveyRest {
 
     public Stream<LimesurveySurvey> getSurveys() throws LimesurveyRestException {
         return StreamSupport.stream(callApi(new LimesurveyApiBody("list_surveys", getParamsWithKey())).getAsJsonArray().spliterator(), false)
-                .map(LimesurveySurvey::new);
+                .map(survey -> gson.fromJson(survey, LimesurveySurvey.class));
     }
 
     public LimesurveySurveyLanguage getSurveyLanguageProperties(int surveyId) throws LimesurveyRestException {
@@ -126,7 +131,7 @@ public class LimesurveyRest {
         localeSettings.add("surveyls_endtext");
         params.setSurveyLocaleSettings(localeSettings);
 
-        return new LimesurveySurveyLanguage(callApi(new LimesurveyApiBody("get_language_properties", params)));
+        return gson.fromJson(callApi(new LimesurveyApiBody("get_language_properties", params)), LimesurveySurveyLanguage.class);
     }
 
     public String getSessionKey() throws LimesurveyRestException {

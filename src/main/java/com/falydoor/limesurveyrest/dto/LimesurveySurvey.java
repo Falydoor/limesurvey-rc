@@ -1,21 +1,15 @@
 package com.falydoor.limesurveyrest.dto;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
 
 public class LimesurveySurvey {
+    @SerializedName("sid")
     private int id;
 
+    @SerializedName("surveyls_title")
     private String title;
 
     private boolean active;
-
-    public LimesurveySurvey(JsonElement json) {
-        JsonObject jsonObject = json.getAsJsonObject();
-        id = jsonObject.get("sid").getAsInt();
-        title = jsonObject.get("surveyls_title").getAsString();
-        active = "Y".equals(jsonObject.get("active").getAsString());
-    }
 
     public int getId() {
         return id;

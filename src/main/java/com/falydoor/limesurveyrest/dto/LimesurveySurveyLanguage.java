@@ -1,18 +1,13 @@
 package com.falydoor.limesurveyrest.dto;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
 
 public class LimesurveySurveyLanguage {
+    @SerializedName("surveyls_welcometext")
     private String welcomeText;
 
+    @SerializedName("surveyls_endtext")
     private String endText;
-
-    public LimesurveySurveyLanguage(JsonElement json) {
-        JsonObject jsonObject = json.getAsJsonObject();
-        welcomeText = jsonObject.get("surveyls_welcometext").getAsString();
-        endText = jsonObject.get("surveyls_endtext").getAsString();
-    }
 
     public String getWelcomeText() {
         return welcomeText;
