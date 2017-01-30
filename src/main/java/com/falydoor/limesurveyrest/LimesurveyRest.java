@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -92,6 +93,25 @@ public class LimesurveyRest {
         responseData.put("datestamp", date);
         params.setResponseData(responseData);
         return callApi(new LsApiBody("add_response", params)).getAsInt();
+    }
+
+    public boolean completeResponse(int surveyId, int responseId) throws LimesurveyRestException {
+        return completeResponse(surveyId, responseId, LocalDateTime.now());
+    }
+
+    public boolean completeResponse(int surveyId, int responseId, LocalDateTime date) throws LimesurveyRestException {
+        LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
+        HashMap<String, String> responseData = new HashMap<>();
+        responseData.put("submitdate", date.format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + date.format(DateTimeFormatter.ISO_LOCAL_TIME));
+        responseData.put("id", String.valueOf(responseId));
+        params.setResponseData(responseData);
+        JsonElement result = callApi(new LsApiBody("update_response", params));
+
+        if (!result.getAsBoolean()) {
+            throw new LimesurveyRestException(result.getAsString());
+        }
+
+        return true;
     }
 
     public Stream<LsQuestion> getQuestions(int surveyId) throws LimesurveyRestException {
