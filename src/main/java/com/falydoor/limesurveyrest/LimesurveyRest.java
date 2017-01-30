@@ -105,6 +105,18 @@ public class LimesurveyRest {
         });
     }
 
+    public Map<String, LsAnswer> getAnswers(int questionId) throws LimesurveyRestException {
+        LsApiBody.LsApiParams params = getParamsWithKey();
+        params.setQuestionId(questionId);
+        List<String> questionSettings = new ArrayList<>();
+        questionSettings.add("answeroptions");
+        params.setQuestionSettings(questionSettings);
+        JsonElement result = callApi(new LsApiBody("get_question_properties", params)).getAsJsonObject().get("answeroptions");
+
+        return gson.fromJson(result, new TypeToken<Map<String, LsAnswer>>() {
+        }.getType());
+    }
+
     public Stream<LsQuestionGroup> getGroups(int surveyId) throws LimesurveyRestException {
         JsonElement result = callApi(new LsApiBody("list_groups", getParamsWithKey(surveyId)));
         List<LsQuestionGroup> questionGroups = gson.fromJson(result, new TypeToken<List<LsQuestionGroup>>() {

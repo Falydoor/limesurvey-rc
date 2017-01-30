@@ -3,6 +3,7 @@ package com.falydoor.limesurveyrest.dto;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.Map;
 
 public class LsApiBody {
     private String method;
@@ -31,11 +32,17 @@ public class LsApiBody {
         @SerializedName("iGroupID")
         private Integer groupId;
 
+        @SerializedName("iQuestionID")
+        private Integer questionId;
+
         @SerializedName("aSurveySettings")
         private List<String> surveySettings;
 
         @SerializedName("aSurveyLocaleSettings")
         private List<String> surveyLocaleSettings;
+
+        @SerializedName("aQuestionSettings")
+        private List<String> questionSettings;
 
         @SerializedName("aResponseData")
         private Map<String, String> responseData;
@@ -102,6 +109,22 @@ public class LsApiBody {
 
         public void setResponseData(Map<String, String> responseData) {
             this.responseData = responseData;
+        }
+
+        public Integer getQuestionId() {
+            return questionId;
+        }
+
+        public void setQuestionId(Integer questionId) {
+            this.questionId = questionId;
+        }
+
+        public List<String> getQuestionSettings() {
+            return questionSettings;
+        }
+
+        public void setQuestionSettings(List<String> questionSettings) {
+            this.questionSettings = questionSettings;
         }
     }
 }
