@@ -53,18 +53,22 @@ public class LimesurveyRest {
         keyTimeout = timeout;
     }
 
-    public JsonElement callApi(LsApiBody lsApiBody) throws LimesurveyRestException {
+    public JsonElement callApi(LsApiBody body) throws LimesurveyRestException {
         try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
             HttpPost post = new HttpPost(url);
             post.setHeader("Content-type", "application/json");
-            String jsonBody = gson.toJson(lsApiBody);
+            String jsonBody = gson.toJson(body);
             LOGGER.debug("API CALL JSON => " + jsonBody);
             post.setEntity(new StringEntity(jsonBody));
             HttpResponse response = client.execute(post);
             if (response.getStatusLine().getStatusCode() == 200) {
-                String result = EntityUtils.toString(response.getEntity());
-                LOGGER.debug("API RESPONSE JSON => " + result);
-                return new JsonParser().parse(result).getAsJsonObject().get("result");
+                String jsonResult = EntityUtils.toString(response.getEntity());
+                LOGGER.debug("API RESPONSE JSON => " + jsonResult);
+                JsonElement result = new JsonParser().parse(jsonResult).getAsJsonObject().get("result");
+                if (result.isJsonObject() && result.getAsJsonObject().has("status")) {
+                    throw new LimesurveyRestException("Error from API : " + result.getAsJsonObject().get("status").getAsString());
+                }
+                return result;
             } else {
                 throw new LimesurveyRestException("Expecting status code 200, got " + response.getStatusLine().getStatusCode() + " instead");
             }
