@@ -57,4 +57,21 @@ public class LimesurveyRest {
         }
     }
 
+    public String getSessionKey() throws LimesurveyRestException {
+        // Use the saved key if isn't expired
+        if (!key.isEmpty() && ZonedDateTime.now().isBefore(keyExpiration)) {
+            return key;
+        }
+
+        // Get session key and save it with an expiration set to 1 minute before the expiration date
+        LimesurveyApiBody.LimesurveyApiParams params = new LimesurveyApiBody.LimesurveyApiParams();
+        params.setUsername(user);
+        params.setPassword(password);
+        JsonElement result = callApi(new LimesurveyApiBody("get_session_key", params));
+        key = result.getAsString();
+        keyExpiration = ZonedDateTime.now().plusSeconds(keyTimeout - 60);
+
+        return key;
+    }
+
 }
