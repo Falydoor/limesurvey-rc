@@ -29,4 +29,12 @@ public class LimesurveyQuestionGroup {
     public void setOrder(int order) {
         this.order = order;
     }
+
+    @Override
+    public String toString() {
+        return "LimesurveyQuestionGroup{" +
+                "id=" + id +
+                ", order=" + order +
+                '}';
+    }
 }

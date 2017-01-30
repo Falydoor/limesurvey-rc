@@ -29,4 +29,12 @@ public class LimesurveySurveyLanguage {
     public void setEndText(String endText) {
         this.endText = endText;
     }
+
+    @Override
+    public String toString() {
+        return "LimesurveySurveyLanguage{" +
+                "welcomeText='" + welcomeText + '\'' +
+                ", endText='" + endText + '\'' +
+                '}';
+    }
 }

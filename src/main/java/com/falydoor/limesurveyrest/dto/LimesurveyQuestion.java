@@ -73,4 +73,16 @@ public class LimesurveyQuestion {
     public void setRelevance(String relevance) {
         this.relevance = relevance;
     }
+
+    @Override
+    public String toString() {
+        return "LimesurveyQuestion{" +
+                "question='" + question + '\'' +
+                ", id=" + id +
+                ", groupId=" + groupId +
+                ", order=" + order +
+                ", type='" + type + '\'' +
+                ", relevance='" + relevance + '\'' +
+                '}';
+    }
 }

@@ -10,10 +10,6 @@ public class LimesurveySurvey {
 
     private boolean active;
 
-    private String welcomeText;
-
-    private String endText;
-
     public LimesurveySurvey(JsonElement json) {
         JsonObject jsonObject = json.getAsJsonObject();
         id = jsonObject.get("sid").getAsInt();
@@ -45,19 +41,12 @@ public class LimesurveySurvey {
         this.active = active;
     }
 
-    public String getWelcomeText() {
-        return welcomeText;
-    }
-
-    public void setWelcomeText(String welcomeText) {
-        this.welcomeText = welcomeText;
-    }
-
-    public String getEndText() {
-        return endText;
-    }
-
-    public void setEndText(String endText) {
-        this.endText = endText;
+    @Override
+    public String toString() {
+        return "LimesurveySurvey{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", active=" + active +
+                '}';
     }
 }
