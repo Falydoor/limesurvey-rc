@@ -57,6 +57,36 @@ public class LimesurveyRest {
         }
     }
 
+    public Stream<LimesurveyQuestion> getQuestions(int surveyId) throws LimesurveyRestException {
+        return getGroups(surveyId).flatMap(group -> {
+            try {
+                return getQuestionsFromGroup(surveyId, group.getId());
+            } catch (LimesurveyRestException e) {
+                // Display in logger or find a way to raise exception in lambda
+//                LOGGER.error();
+            }
+            return Stream.empty();
+        });
+    }
+
+    public Stream<LimesurveyQuestionGroup> getGroups(int surveyId) throws LimesurveyRestException {
+        JsonElement result = callApi(new LimesurveyApiBody("list_groups", getParamsWithKey(surveyId)));
+
+        return StreamSupport.stream(result.getAsJsonArray().spliterator(), false)
+                .map(LimesurveyQuestionGroup::new)
+                .sorted(Comparator.comparing(LimesurveyQuestionGroup::getOrder));
+    }
+
+    public Stream<LimesurveyQuestion> getQuestionsFromGroup(int surveyId, int groupId) throws LimesurveyRestException {
+        LimesurveyApiBody.LimesurveyApiParams params = getParamsWithKey(surveyId);
+        params.setGroupId(groupId);
+        JsonElement result = callApi(new LimesurveyApiBody("list_questions", params));
+
+        return StreamSupport.stream(result.getAsJsonArray().spliterator(), false)
+                .map(LimesurveyQuestion::new)
+                .sorted(Comparator.comparing(LimesurveyQuestion::getOrder));
+    }
+
     public boolean isSurveyActive(int surveyId) throws LimesurveyRestException {
         LimesurveyApiBody.LimesurveyApiParams params = getParamsWithKey(surveyId);
         JsonArray surveySettings = new JsonArray();
@@ -77,6 +107,16 @@ public class LimesurveyRest {
     public Stream<LimesurveySurvey> getSurveys() throws LimesurveyRestException {
         return StreamSupport.stream(callApi(new LimesurveyApiBody("list_surveys", getParamsWithKey())).getAsJsonArray().spliterator(), false)
                 .map(LimesurveySurvey::new);
+    }
+
+    public LimesurveySurveyLanguage getSurveyLanguageProperties(int surveyId) throws LimesurveyRestException {
+        LimesurveyApiBody.LimesurveyApiParams params = getParamsWithKey(surveyId);
+        JsonArray localeSettings = new JsonArray();
+        localeSettings.add(new JsonPrimitive("surveyls_welcometext"));
+        localeSettings.add(new JsonPrimitive("surveyls_endtext"));
+        params.setSurveyLocaleSettings(localeSettings);
+
+        return new LimesurveySurveyLanguage(callApi(new LimesurveyApiBody("get_language_properties", params)));
     }
 
     public String getSessionKey() throws LimesurveyRestException {
