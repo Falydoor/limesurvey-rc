@@ -22,9 +22,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class LimesurveyRest {
@@ -82,6 +81,17 @@ public class LimesurveyRest {
         } catch (IOException e) {
             throw new LimesurveyRestException("Exception while calling API : " + e.getMessage(), e);
         }
+    }
+
+    public int createIncompleteResponse(int surveyId) throws LimesurveyRestException {
+        LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
+        HashMap<String, String> responseData = new HashMap<>();
+        responseData.put("submitdate", "");
+        String date = ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME);
+        responseData.put("startdate", date);
+        responseData.put("datestamp", date);
+        params.setResponseData(responseData);
+        return callApi(new LsApiBody("add_response", params)).getAsInt();
     }
 
     public Stream<LsQuestion> getQuestions(int surveyId) throws LimesurveyRestException {

@@ -37,6 +37,9 @@ public class LsApiBody {
         @SerializedName("aSurveyLocaleSettings")
         private List<String> surveyLocaleSettings;
 
+        @SerializedName("aResponseData")
+        private Map<String, String> responseData;
+
         public String getUsername() {
             return username;
         }
@@ -91,6 +94,14 @@ public class LsApiBody {
 
         public void setSurveyLocaleSettings(List<String> surveyLocaleSettings) {
             this.surveyLocaleSettings = surveyLocaleSettings;
+        }
+
+        public Map<String, String> getResponseData() {
+            return responseData;
+        }
+
+        public void setResponseData(Map<String, String> responseData) {
+            this.responseData = responseData;
         }
     }
 }
