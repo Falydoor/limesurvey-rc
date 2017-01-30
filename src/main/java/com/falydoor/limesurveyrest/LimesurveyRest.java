@@ -57,6 +57,28 @@ public class LimesurveyRest {
         }
     }
 
+    public boolean isSurveyActive(int surveyId) throws LimesurveyRestException {
+        LimesurveyApiBody.LimesurveyApiParams params = getParamsWithKey(surveyId);
+        JsonArray surveySettings = new JsonArray();
+        surveySettings.add(new JsonPrimitive("active"));
+        params.setSurveySettings(surveySettings);
+
+        return "Y".equals(callApi(new LimesurveyApiBody("get_survey_properties", params)).getAsJsonObject().get("active").getAsString());
+    }
+
+    public boolean isSurveyExists(int surveyId) throws LimesurveyRestException {
+        return getSurveys().anyMatch(survey -> survey.getId() == surveyId);
+    }
+
+    public Stream<LimesurveySurvey> getActiveSurveys() throws LimesurveyRestException {
+        return getSurveys().filter(LimesurveySurvey::isActive);
+    }
+
+    public Stream<LimesurveySurvey> getSurveys() throws LimesurveyRestException {
+        return StreamSupport.stream(callApi(new LimesurveyApiBody("list_surveys", getParamsWithKey())).getAsJsonArray().spliterator(), false)
+                .map(LimesurveySurvey::new);
+    }
+
     public String getSessionKey() throws LimesurveyRestException {
         // Use the saved key if isn't expired
         if (!key.isEmpty() && ZonedDateTime.now().isBefore(keyExpiration)) {
@@ -72,6 +94,18 @@ public class LimesurveyRest {
         keyExpiration = ZonedDateTime.now().plusSeconds(keyTimeout - 60);
 
         return key;
+    }
+
+    private LimesurveyApiBody.LimesurveyApiParams getParamsWithKey(int surveyId) throws LimesurveyRestException {
+        LimesurveyApiBody.LimesurveyApiParams params = getParamsWithKey();
+        params.setSurveyId(surveyId);
+        return params;
+    }
+
+    private LimesurveyApiBody.LimesurveyApiParams getParamsWithKey() throws LimesurveyRestException {
+        LimesurveyApiBody.LimesurveyApiParams params = new LimesurveyApiBody.LimesurveyApiParams();
+        params.setSessionKey(getSessionKey());
+        return params;
     }
 
 }
