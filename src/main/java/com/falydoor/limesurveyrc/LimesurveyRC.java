@@ -100,18 +100,23 @@ public class LimesurveyRC {
     }
 
     public boolean completeResponse(int surveyId, int responseId, LocalDateTime date) throws LimesurveyRCException {
-        LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
-        HashMap<String, String> responseData = new HashMap<>();
+        Map<String, String> responseData = new HashMap<>();
         responseData.put("submitdate", date.format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + date.format(DateTimeFormatter.ISO_LOCAL_TIME));
-        responseData.put("id", String.valueOf(responseId));
-        params.setResponseData(responseData);
-        JsonElement result = callApi(new LsApiBody("update_response", params));
+        JsonElement result = updateResponse(surveyId, responseId, responseData);
 
         if (!result.getAsBoolean()) {
             throw new LimesurveyRCException(result.getAsString());
         }
 
         return true;
+    }
+
+    public JsonElement updateResponse(int surveyId, int responseId, Map<String, String> responseData) throws LimesurveyRCException {
+        LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
+        responseData.put("id", String.valueOf(responseId));
+        params.setResponseData(responseData);
+
+        return callApi(new LsApiBody("update_response", params));
     }
 
     public Stream<LsQuestion> getQuestions(int surveyId) throws LimesurveyRCException {
