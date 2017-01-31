@@ -27,6 +27,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Stream;
 
+/**
+ * Limesurvey Remote Control client class.
+ */
 public class LimesurveyRC {
 
     private final Logger LOGGER = LoggerFactory.getLogger(LimesurveyRC.class);
@@ -45,6 +48,13 @@ public class LimesurveyRC {
 
     private Gson gson;
 
+    /**
+     * Create a new Limesurvey Remote Control instance.
+     *
+     * @param url      the url for the Remote Control endpoint (ex: http://XX.XX.XX.XX/index.php/admin/remotecontrol)
+     * @param user     the user for the Remote Control
+     * @param password the password for the Remote Control
+     */
     public LimesurveyRC(String url, String user, String password) {
         this.url = url;
         this.user = user;
@@ -56,11 +66,24 @@ public class LimesurveyRC {
                 .create();
     }
 
+    /**
+     * Sets key timeout. Default value is 7200 seconds (2 hours).
+     * If the value of "iSessionExpirationTime" in your config-defaults.php is different, you have to set it using this method.
+     *
+     * @param timeout the timeout
+     */
     public void setKeyTimeout(int timeout) {
         keyTimeout = timeout;
     }
 
-    public JsonElement callApi(LsApiBody body) throws LimesurveyRCException {
+    /**
+     * Call Limesurvey Remote Control.
+     *
+     * @param body the body of the request. Contains which method to call and the parameters
+     * @return the json element containing the result from the call
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
+    public JsonElement callRC(LsApiBody body) throws LimesurveyRCException {
         try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
             HttpPost post = new HttpPost(url);
             post.setHeader("Content-type", "application/json");
@@ -84,6 +107,13 @@ public class LimesurveyRC {
         }
     }
 
+    /**
+     * Create an incomplete response, its field "completed" is set to "N" and the response doesn't have a submitdate.
+     *
+     * @param surveyId the survey id of the survey you want to create the response
+     * @return the id of the response
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public int createIncompleteResponse(int surveyId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
         HashMap<String, String> responseData = new HashMap<>();
@@ -92,13 +122,30 @@ public class LimesurveyRC {
         responseData.put("startdate", date);
         responseData.put("datestamp", date);
         params.setResponseData(responseData);
-        return callApi(new LsApiBody("add_response", params)).getAsInt();
+        return callRC(new LsApiBody("add_response", params)).getAsInt();
     }
 
+    /**
+     * Complete a response with the current date.
+     *
+     * @param surveyId   the survey id of the survey you want to complete the response
+     * @param responseId the response id of the response you want to complete
+     * @return true if the response was successfuly completed
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public boolean completeResponse(int surveyId, int responseId) throws LimesurveyRCException {
         return completeResponse(surveyId, responseId, LocalDateTime.now());
     }
 
+    /**
+     * Complete a response.
+     *
+     * @param surveyId   the survey id of the survey you want to complete the response
+     * @param responseId the response id of the response you want to complete
+     * @param date       the date where the response will be completed (submitdate)
+     * @return true if the response was successfuly completed
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public boolean completeResponse(int surveyId, int responseId, LocalDateTime date) throws LimesurveyRCException {
         Map<String, String> responseData = new HashMap<>();
         responseData.put("submitdate", date.format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + date.format(DateTimeFormatter.ISO_LOCAL_TIME));
@@ -111,14 +158,31 @@ public class LimesurveyRC {
         return true;
     }
 
+    /**
+     * Update a response.
+     *
+     * @param surveyId     the survey id of the survey you want to update the response
+     * @param responseId   the response id of the response you want to update
+     * @param responseData the response data that contains the fields you want to update
+     * @return the json element
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public JsonElement updateResponse(int surveyId, int responseId, Map<String, String> responseData) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
         responseData.put("id", String.valueOf(responseId));
         params.setResponseData(responseData);
 
-        return callApi(new LsApiBody("update_response", params));
+        return callRC(new LsApiBody("update_response", params));
     }
 
+    /**
+     * Gets questions from a survey.
+     * The questions are ordered using the "group_order" field from the groups and then the "question_order" field from the questions
+     *
+     * @param surveyId the survey id of the survey you want to get the questions
+     * @return a stream of questions in an ordered order
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public Stream<LsQuestion> getQuestions(int surveyId) throws LimesurveyRCException {
         return getGroups(surveyId).flatMap(group -> {
             try {
@@ -130,61 +194,118 @@ public class LimesurveyRC {
         });
     }
 
+    /**
+     * Gets possible answers from a question.
+     *
+     * @param questionId the question id you want to get the answers
+     * @return the answers of the question
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public Map<String, LsQuestionAnswer> getQuestionAnswers(int questionId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey();
         params.setQuestionId(questionId);
         List<String> questionSettings = new ArrayList<>();
         questionSettings.add("answeroptions");
         params.setQuestionSettings(questionSettings);
-        JsonElement result = callApi(new LsApiBody("get_question_properties", params)).getAsJsonObject().get("answeroptions");
+        JsonElement result = callRC(new LsApiBody("get_question_properties", params)).getAsJsonObject().get("answeroptions");
 
         return gson.fromJson(result, new TypeToken<Map<String, LsQuestionAnswer>>() {
         }.getType());
     }
 
+    /**
+     * Gets groups from a survey.
+     * The groups are ordered using the "group_order" field.
+     *
+     * @param surveyId the survey id you want to get the groups
+     * @return a stream of groups in an ordered order
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public Stream<LsQuestionGroup> getGroups(int surveyId) throws LimesurveyRCException {
-        JsonElement result = callApi(new LsApiBody("list_groups", getParamsWithKey(surveyId)));
+        JsonElement result = callRC(new LsApiBody("list_groups", getParamsWithKey(surveyId)));
         List<LsQuestionGroup> questionGroups = gson.fromJson(result, new TypeToken<List<LsQuestionGroup>>() {
         }.getType());
 
         return questionGroups.stream().sorted(Comparator.comparing(LsQuestionGroup::getOrder));
     }
 
+    /**
+     * Gets questions from a group.
+     * The questions are ordered using the "question_order" field.
+     *
+     * @param surveyId the survey id you want to get the questions
+     * @param groupId  the group id you want to get the questions
+     * @return a stream of questions in an ordered order
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public Stream<LsQuestion> getQuestionsFromGroup(int surveyId, int groupId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
         params.setGroupId(groupId);
-        JsonElement result = callApi(new LsApiBody("list_questions", params));
+        JsonElement result = callRC(new LsApiBody("list_questions", params));
         List<LsQuestion> questions = gson.fromJson(result, new TypeToken<List<LsQuestion>>() {
         }.getType());
 
         return questions.stream().sorted(Comparator.comparing(LsQuestion::getOrder));
     }
 
+    /**
+     * Check if a survey is active.
+     *
+     * @param surveyId the survey id of the survey you want to check
+     * @return true if the survey is active
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public boolean isSurveyActive(int surveyId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
         List<String> surveySettings = new ArrayList<>();
         surveySettings.add("active");
         params.setSurveySettings(surveySettings);
 
-        return "Y".equals(callApi(new LsApiBody("get_survey_properties", params)).getAsJsonObject().get("active").getAsString());
+        return "Y".equals(callRC(new LsApiBody("get_survey_properties", params)).getAsJsonObject().get("active").getAsString());
     }
 
+    /**
+     * Check if a survey exists.
+     *
+     * @param surveyId the survey id of the survey you want to check
+     * @return true if the survey exists
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public boolean isSurveyExists(int surveyId) throws LimesurveyRCException {
         return getSurveys().anyMatch(survey -> survey.getId() == surveyId);
     }
 
+    /**
+     * Gets surveys that are active.
+     *
+     * @return a stream of active surveys
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public Stream<LsSurvey> getActiveSurveys() throws LimesurveyRCException {
         return getSurveys().filter(LsSurvey::isActive);
     }
 
+    /**
+     * Gets all surveys.
+     *
+     * @return a stream of surveys
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public Stream<LsSurvey> getSurveys() throws LimesurveyRCException {
-        JsonElement result = callApi(new LsApiBody("list_surveys", getParamsWithKey()));
+        JsonElement result = callRC(new LsApiBody("list_surveys", getParamsWithKey()));
         List<LsSurvey> surveys = gson.fromJson(result, new TypeToken<List<LsSurvey>>() {
         }.getType());
 
         return surveys.stream();
     }
 
+    /**
+     * Gets language properties from a survey.
+     *
+     * @param surveyId the survey id of the survey you want the properties
+     * @return the language properties
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public LsSurveyLanguage getSurveyLanguageProperties(int surveyId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
         List<String> localeSettings = new ArrayList<>();
@@ -192,9 +313,15 @@ public class LimesurveyRC {
         localeSettings.add("surveyls_endtext");
         params.setSurveyLocaleSettings(localeSettings);
 
-        return gson.fromJson(callApi(new LsApiBody("get_language_properties", params)), LsSurveyLanguage.class);
+        return gson.fromJson(callRC(new LsApiBody("get_language_properties", params)), LsSurveyLanguage.class);
     }
 
+    /**
+     * Gets the current session key.
+     *
+     * @return the session key
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
     public String getSessionKey() throws LimesurveyRCException {
         // Use the saved key if isn't expired
         if (!key.isEmpty() && ZonedDateTime.now().isBefore(keyExpiration)) {
@@ -205,7 +332,7 @@ public class LimesurveyRC {
         LsApiBody.LsApiParams params = new LsApiBody.LsApiParams();
         params.setUsername(user);
         params.setPassword(password);
-        JsonElement result = callApi(new LsApiBody("get_session_key", params));
+        JsonElement result = callRC(new LsApiBody("get_session_key", params));
         key = result.getAsString();
         keyExpiration = ZonedDateTime.now().plusSeconds(keyTimeout - 60);
 

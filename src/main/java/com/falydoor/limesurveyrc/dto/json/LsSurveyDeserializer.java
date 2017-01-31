@@ -6,6 +6,10 @@ import com.google.gson.*;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 
+/**
+ * The type Ls survey deserializer.
+ *  * A deserializer is used for converting the Y/N values to a boolean.
+ */
 public class LsSurveyDeserializer implements JsonDeserializer<LsSurvey> {
     @Override
     public LsSurvey deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
