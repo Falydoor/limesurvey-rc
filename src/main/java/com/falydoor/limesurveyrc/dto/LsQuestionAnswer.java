@@ -2,7 +2,7 @@ package com.falydoor.limesurveyrc.dto;
 
 import com.google.gson.annotations.SerializedName;
 
-public class LsAnswer {
+public class LsQuestionAnswer {
     private String answer;
 
     @SerializedName("assessment_value")
@@ -37,7 +37,7 @@ public class LsAnswer {
 
     @Override
     public String toString() {
-        return "LsAnswer{" +
+        return "LsQuestionAnswer{" +
                 "answer='" + answer + '\'' +
                 ", value=" + value +
                 ", scaleId=" + scaleId +

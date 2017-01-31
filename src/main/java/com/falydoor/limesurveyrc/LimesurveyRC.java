@@ -125,7 +125,7 @@ public class LimesurveyRC {
         });
     }
 
-    public Map<String, LsAnswer> getAnswers(int questionId) throws LimesurveyRCException {
+    public Map<String, LsQuestionAnswer> getQuestionAnswers(int questionId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey();
         params.setQuestionId(questionId);
         List<String> questionSettings = new ArrayList<>();
@@ -133,7 +133,7 @@ public class LimesurveyRC {
         params.setQuestionSettings(questionSettings);
         JsonElement result = callApi(new LsApiBody("get_question_properties", params)).getAsJsonObject().get("answeroptions");
 
-        return gson.fromJson(result, new TypeToken<Map<String, LsAnswer>>() {
+        return gson.fromJson(result, new TypeToken<Map<String, LsQuestionAnswer>>() {
         }.getType());
     }
 
