@@ -1,10 +1,10 @@
-package com.falydoor.limesurveyrest;
+package com.falydoor.limesurveyrc;
 
-import com.falydoor.limesurveyrest.dto.*;
-import com.falydoor.limesurveyrest.dto.json.LocalDateDeserializer;
-import com.falydoor.limesurveyrest.dto.json.LsQuestionDeserializer;
-import com.falydoor.limesurveyrest.dto.json.LsSurveyDeserializer;
-import com.falydoor.limesurveyrest.exception.LimesurveyRestException;
+import com.falydoor.limesurveyrc.dto.*;
+import com.falydoor.limesurveyrc.dto.json.LocalDateDeserializer;
+import com.falydoor.limesurveyrc.dto.json.LsQuestionDeserializer;
+import com.falydoor.limesurveyrc.dto.json.LsSurveyDeserializer;
+import com.falydoor.limesurveyrc.exception.LimesurveyRCException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -27,9 +27,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class LimesurveyRest {
+public class LimesurveyRC {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(LimesurveyRest.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(LimesurveyRC.class);
 
     private String url;
 
@@ -45,7 +45,7 @@ public class LimesurveyRest {
 
     private Gson gson;
 
-    public LimesurveyRest(String url, String user, String password) {
+    public LimesurveyRC(String url, String user, String password) {
         this.url = url;
         this.user = user;
         this.password = password;
@@ -60,7 +60,7 @@ public class LimesurveyRest {
         keyTimeout = timeout;
     }
 
-    public JsonElement callApi(LsApiBody body) throws LimesurveyRestException {
+    public JsonElement callApi(LsApiBody body) throws LimesurveyRCException {
         try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
             HttpPost post = new HttpPost(url);
             post.setHeader("Content-type", "application/json");
@@ -73,18 +73,18 @@ public class LimesurveyRest {
                 LOGGER.debug("API RESPONSE JSON => " + jsonResult);
                 JsonElement result = new JsonParser().parse(jsonResult).getAsJsonObject().get("result");
                 if (result.isJsonObject() && result.getAsJsonObject().has("status")) {
-                    throw new LimesurveyRestException("Error from API : " + result.getAsJsonObject().get("status").getAsString());
+                    throw new LimesurveyRCException("Error from API : " + result.getAsJsonObject().get("status").getAsString());
                 }
                 return result;
             } else {
-                throw new LimesurveyRestException("Expecting status code 200, got " + response.getStatusLine().getStatusCode() + " instead");
+                throw new LimesurveyRCException("Expecting status code 200, got " + response.getStatusLine().getStatusCode() + " instead");
             }
         } catch (IOException e) {
-            throw new LimesurveyRestException("Exception while calling API : " + e.getMessage(), e);
+            throw new LimesurveyRCException("Exception while calling API : " + e.getMessage(), e);
         }
     }
 
-    public int createIncompleteResponse(int surveyId) throws LimesurveyRestException {
+    public int createIncompleteResponse(int surveyId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
         HashMap<String, String> responseData = new HashMap<>();
         responseData.put("submitdate", "");
@@ -95,11 +95,11 @@ public class LimesurveyRest {
         return callApi(new LsApiBody("add_response", params)).getAsInt();
     }
 
-    public boolean completeResponse(int surveyId, int responseId) throws LimesurveyRestException {
+    public boolean completeResponse(int surveyId, int responseId) throws LimesurveyRCException {
         return completeResponse(surveyId, responseId, LocalDateTime.now());
     }
 
-    public boolean completeResponse(int surveyId, int responseId, LocalDateTime date) throws LimesurveyRestException {
+    public boolean completeResponse(int surveyId, int responseId, LocalDateTime date) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
         HashMap<String, String> responseData = new HashMap<>();
         responseData.put("submitdate", date.format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + date.format(DateTimeFormatter.ISO_LOCAL_TIME));
@@ -108,24 +108,24 @@ public class LimesurveyRest {
         JsonElement result = callApi(new LsApiBody("update_response", params));
 
         if (!result.getAsBoolean()) {
-            throw new LimesurveyRestException(result.getAsString());
+            throw new LimesurveyRCException(result.getAsString());
         }
 
         return true;
     }
 
-    public Stream<LsQuestion> getQuestions(int surveyId) throws LimesurveyRestException {
+    public Stream<LsQuestion> getQuestions(int surveyId) throws LimesurveyRCException {
         return getGroups(surveyId).flatMap(group -> {
             try {
                 return getQuestionsFromGroup(surveyId, group.getId());
-            } catch (LimesurveyRestException e) {
+            } catch (LimesurveyRCException e) {
                 LOGGER.error("Unable to get questions from group " + group.getId(), e);
             }
             return Stream.empty();
         });
     }
 
-    public Map<String, LsAnswer> getAnswers(int questionId) throws LimesurveyRestException {
+    public Map<String, LsAnswer> getAnswers(int questionId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey();
         params.setQuestionId(questionId);
         List<String> questionSettings = new ArrayList<>();
@@ -137,7 +137,7 @@ public class LimesurveyRest {
         }.getType());
     }
 
-    public Stream<LsQuestionGroup> getGroups(int surveyId) throws LimesurveyRestException {
+    public Stream<LsQuestionGroup> getGroups(int surveyId) throws LimesurveyRCException {
         JsonElement result = callApi(new LsApiBody("list_groups", getParamsWithKey(surveyId)));
         List<LsQuestionGroup> questionGroups = gson.fromJson(result, new TypeToken<List<LsQuestionGroup>>() {
         }.getType());
@@ -145,7 +145,7 @@ public class LimesurveyRest {
         return questionGroups.stream().sorted(Comparator.comparing(LsQuestionGroup::getOrder));
     }
 
-    public Stream<LsQuestion> getQuestionsFromGroup(int surveyId, int groupId) throws LimesurveyRestException {
+    public Stream<LsQuestion> getQuestionsFromGroup(int surveyId, int groupId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
         params.setGroupId(groupId);
         JsonElement result = callApi(new LsApiBody("list_questions", params));
@@ -155,7 +155,7 @@ public class LimesurveyRest {
         return questions.stream().sorted(Comparator.comparing(LsQuestion::getOrder));
     }
 
-    public boolean isSurveyActive(int surveyId) throws LimesurveyRestException {
+    public boolean isSurveyActive(int surveyId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
         List<String> surveySettings = new ArrayList<>();
         surveySettings.add("active");
@@ -164,15 +164,15 @@ public class LimesurveyRest {
         return "Y".equals(callApi(new LsApiBody("get_survey_properties", params)).getAsJsonObject().get("active").getAsString());
     }
 
-    public boolean isSurveyExists(int surveyId) throws LimesurveyRestException {
+    public boolean isSurveyExists(int surveyId) throws LimesurveyRCException {
         return getSurveys().anyMatch(survey -> survey.getId() == surveyId);
     }
 
-    public Stream<LsSurvey> getActiveSurveys() throws LimesurveyRestException {
+    public Stream<LsSurvey> getActiveSurveys() throws LimesurveyRCException {
         return getSurveys().filter(LsSurvey::isActive);
     }
 
-    public Stream<LsSurvey> getSurveys() throws LimesurveyRestException {
+    public Stream<LsSurvey> getSurveys() throws LimesurveyRCException {
         JsonElement result = callApi(new LsApiBody("list_surveys", getParamsWithKey()));
         List<LsSurvey> surveys = gson.fromJson(result, new TypeToken<List<LsSurvey>>() {
         }.getType());
@@ -180,7 +180,7 @@ public class LimesurveyRest {
         return surveys.stream();
     }
 
-    public LsSurveyLanguage getSurveyLanguageProperties(int surveyId) throws LimesurveyRestException {
+    public LsSurveyLanguage getSurveyLanguageProperties(int surveyId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
         List<String> localeSettings = new ArrayList<>();
         localeSettings.add("surveyls_welcometext");
@@ -190,7 +190,7 @@ public class LimesurveyRest {
         return gson.fromJson(callApi(new LsApiBody("get_language_properties", params)), LsSurveyLanguage.class);
     }
 
-    public String getSessionKey() throws LimesurveyRestException {
+    public String getSessionKey() throws LimesurveyRCException {
         // Use the saved key if isn't expired
         if (!key.isEmpty() && ZonedDateTime.now().isBefore(keyExpiration)) {
             return key;
@@ -207,13 +207,13 @@ public class LimesurveyRest {
         return key;
     }
 
-    private LsApiBody.LsApiParams getParamsWithKey(int surveyId) throws LimesurveyRestException {
+    private LsApiBody.LsApiParams getParamsWithKey(int surveyId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey();
         params.setSurveyId(surveyId);
         return params;
     }
 
-    private LsApiBody.LsApiParams getParamsWithKey() throws LimesurveyRestException {
+    private LsApiBody.LsApiParams getParamsWithKey() throws LimesurveyRCException {
         LsApiBody.LsApiParams params = new LsApiBody.LsApiParams();
         params.setSessionKey(getSessionKey());
         return params;

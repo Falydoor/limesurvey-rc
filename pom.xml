@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.falydoor</groupId>
-    <artifactId>limesurvey-rest</artifactId>
+    <artifactId>limesurvey-rc</artifactId>
     <version>0.1</version>
     <build>
         <plugins>

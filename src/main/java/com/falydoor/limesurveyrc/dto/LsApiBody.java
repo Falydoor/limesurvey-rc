@@ -1,4 +1,4 @@
-package com.falydoor.limesurveyrest.dto;
+package com.falydoor.limesurveyrc.dto;
 
 import com.google.gson.annotations.SerializedName;
 
