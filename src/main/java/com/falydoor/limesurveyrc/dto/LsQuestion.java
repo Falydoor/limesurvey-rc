@@ -21,9 +21,6 @@ public class LsQuestion {
 
     private String relevance;
 
-    @SerializedName("gid")
-    private int parentGroupId;
-
     @SerializedName("sid")
     private int surveyId;
 
@@ -154,24 +151,6 @@ public class LsQuestion {
      */
     public void setRelevance(String relevance) {
         this.relevance = relevance;
-    }
-
-    /**
-     * Gets parent group id.
-     *
-     * @return the parent group id
-     */
-    public int getParentGroupId() {
-        return parentGroupId;
-    }
-
-    /**
-     * Sets parent group id.
-     *
-     * @param parentGroupId the parent group id
-     */
-    public void setParentGroupId(int parentGroupId) {
-        this.parentGroupId = parentGroupId;
     }
 
     /**
@@ -363,7 +342,6 @@ public class LsQuestion {
                 ", order=" + order +
                 ", type='" + type + '\'' +
                 ", relevance='" + relevance + '\'' +
-                ", parentGroupId=" + parentGroupId +
                 ", surveyId=" + surveyId +
                 ", title='" + title + '\'' +
                 ", preg='" + preg + '\'' +
