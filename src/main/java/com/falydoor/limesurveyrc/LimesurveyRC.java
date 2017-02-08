@@ -313,7 +313,9 @@ public class LimesurveyRC {
         localeSettings.add("surveyls_endtext");
         params.setSurveyLocaleSettings(localeSettings);
 
-        return gson.fromJson(callRC(new LsApiBody("get_language_properties", params)), LsSurveyLanguage.class);
+        LsSurveyLanguage surveyLanguage = gson.fromJson(callRC(new LsApiBody("get_language_properties", params)), LsSurveyLanguage.class);
+        surveyLanguage.setId(surveyId);
+        return surveyLanguage;
     }
 
     /**

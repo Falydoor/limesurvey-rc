@@ -6,11 +6,21 @@ import com.google.gson.annotations.SerializedName;
  * Survey language properties DTO.
  */
 public class LsSurveyLanguage {
+    private int id;
+
     @SerializedName("surveyls_welcometext")
     private String welcomeText;
 
     @SerializedName("surveyls_endtext")
     private String endText;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     /**
      * Gets welcome text.
@@ -51,7 +61,8 @@ public class LsSurveyLanguage {
     @Override
     public String toString() {
         return "LsSurveyLanguage{" +
-                "welcomeText='" + welcomeText + '\'' +
+                "id=" + id +
+                ", welcomeText='" + welcomeText + '\'' +
                 ", endText='" + endText + '\'' +
                 '}';
     }
