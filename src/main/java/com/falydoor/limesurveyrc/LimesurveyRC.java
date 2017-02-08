@@ -195,6 +195,19 @@ public class LimesurveyRC {
     }
 
     /**
+     * Gets question from a survey.
+     *
+     * @param surveyId   the survey id of the survey you want to get the question
+     * @param questionId the question id
+     * @return the question
+     * @throws LimesurveyRCException if no question was found with the given id
+     */
+    public LsQuestion getQuestion(int surveyId, int questionId) throws LimesurveyRCException {
+        return getQuestions(surveyId).filter(question -> question.getId() == questionId)
+                .findFirst().orElseThrow(() -> new LimesurveyRCException("No question found for id " + questionId + " in survey " + surveyId));
+    }
+
+    /**
      * Gets possible answers from a question.
      *
      * @param questionId the question id you want to get the answers
