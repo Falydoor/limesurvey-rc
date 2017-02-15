@@ -9,7 +9,18 @@ This project use Maven and can be build doing :
 ```
 mvn clean install
 ```
-This project is not yet on Maven Central but it will be soon the case.
+Then you can add the jar to your project.
+
+# Maven
+
+This project is on Maven Central, you just have to add the dependency to your pom.xml
+```
+<dependency>
+    <groupId>com.github.falydoor</groupId>
+    <artifactId>limesurvey-rc</artifactId>
+    <version>0.1</version>
+</dependency>
+```
 
 # Usage
 Simply create a new LimesurveyRC object by passing the correct credentials
