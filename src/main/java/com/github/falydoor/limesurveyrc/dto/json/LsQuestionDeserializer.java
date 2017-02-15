@@ -1,6 +1,6 @@
-package com.falydoor.limesurveyrc.dto.json;
+package com.github.falydoor.limesurveyrc.dto.json;
 
-import com.falydoor.limesurveyrc.dto.LsQuestion;
+import com.github.falydoor.limesurveyrc.dto.LsQuestion;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;

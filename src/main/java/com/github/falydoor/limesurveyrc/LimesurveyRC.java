@@ -1,10 +1,10 @@
-package com.falydoor.limesurveyrc;
+package com.github.falydoor.limesurveyrc;
 
-import com.falydoor.limesurveyrc.dto.*;
-import com.falydoor.limesurveyrc.dto.json.LocalDateDeserializer;
-import com.falydoor.limesurveyrc.dto.json.LsQuestionDeserializer;
-import com.falydoor.limesurveyrc.dto.json.LsSurveyDeserializer;
-import com.falydoor.limesurveyrc.exception.LimesurveyRCException;
+import com.github.falydoor.limesurveyrc.dto.*;
+import com.github.falydoor.limesurveyrc.dto.json.LocalDateDeserializer;
+import com.github.falydoor.limesurveyrc.dto.json.LsQuestionDeserializer;
+import com.github.falydoor.limesurveyrc.dto.json.LsSurveyDeserializer;
+import com.github.falydoor.limesurveyrc.exception.LimesurveyRCException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;

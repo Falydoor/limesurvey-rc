@@ -1,4 +1,4 @@
-package com.falydoor.limesurveyrc.dto.json;
+package com.github.falydoor.limesurveyrc.dto.json;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

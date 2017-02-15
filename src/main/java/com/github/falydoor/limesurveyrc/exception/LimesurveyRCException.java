@@ -1,4 +1,4 @@
-package com.falydoor.limesurveyrc.exception;
+package com.github.falydoor.limesurveyrc.exception;
 
 /**
  * The type Limesurvey rc exception.
