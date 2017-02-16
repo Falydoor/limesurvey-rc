@@ -37,4 +37,4 @@ limesurveyRC.getActiveSurveys().forEach(survey -> System.out.println(survey.getT
 
 ### Change the default key timeout
 By default, the key timeout is set to 2 hours (7200 seconds).
-If the value of "iSessionExpirationTime" in your config-defaults.php is different, you have to set it using this method.
+If the value of "iSessionExpirationTime" in your config-defaults.php is different, you have to set it using the method "setKeyTimeout" after creating your LimesurveyRC instance.
