@@ -354,6 +354,26 @@ public class LimesurveyRC {
         return key;
     }
 
+    /**
+     * Gets participant properties.
+     *
+     * @param surveyId        the survey id of the participant's survey
+     * @param token           the token of the participant
+     * @param tokenProperties the token properties
+     * @return the participant properties
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
+    public Map<String, String> getParticipantProperties(int surveyId, String token, List<String> tokenProperties) throws LimesurveyRCException {
+        LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
+        Map<String, String> queryProperties = new HashMap<>();
+        queryProperties.put("token", token);
+        params.setTokenQueryProperties(queryProperties);
+        params.setTokenProperties(tokenProperties);
+
+        return gson.fromJson(callRC(new LsApiBody("get_participant_properties", params)), new TypeToken<Map<String, String>>() {
+        }.getType());
+    }
+
     private LsApiBody.LsApiParams getParamsWithKey(int surveyId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey();
         params.setSurveyId(surveyId);

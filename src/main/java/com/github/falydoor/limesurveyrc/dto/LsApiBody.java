@@ -59,6 +59,12 @@ public class LsApiBody {
         @SerializedName("aResponseData")
         private Map<String, String> responseData;
 
+        @SerializedName("aTokenQueryProperties")
+        private Map<String, String> tokenQueryProperties;
+
+        @SerializedName("aTokenProperties")
+        private List<String> tokenProperties;
+
         /**
          * Gets username.
          *
@@ -237,6 +243,42 @@ public class LsApiBody {
          */
         public void setQuestionSettings(List<String> questionSettings) {
             this.questionSettings = questionSettings;
+        }
+
+        /**
+         * Gets token query properties.
+         *
+         * @return the token query properties
+         */
+        public Map<String, String> getTokenQueryProperties() {
+            return tokenQueryProperties;
+        }
+
+        /**
+         * Sets token query properties.
+         *
+         * @param tokenQueryProperties the token query properties
+         */
+        public void setTokenQueryProperties(Map<String, String> tokenQueryProperties) {
+            this.tokenQueryProperties = tokenQueryProperties;
+        }
+
+        /**
+         * Gets token properties.
+         *
+         * @return the token properties
+         */
+        public List<String> getTokenProperties() {
+            return tokenProperties;
+        }
+
+        /**
+         * Sets token properties.
+         *
+         * @param tokenProperties the token properties
+         */
+        public void setTokenProperties(List<String> tokenProperties) {
+            this.tokenProperties = tokenProperties;
         }
     }
 }
