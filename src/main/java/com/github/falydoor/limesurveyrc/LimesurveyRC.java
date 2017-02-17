@@ -2,6 +2,7 @@ package com.github.falydoor.limesurveyrc;
 
 import com.github.falydoor.limesurveyrc.dto.*;
 import com.github.falydoor.limesurveyrc.dto.json.LocalDateDeserializer;
+import com.github.falydoor.limesurveyrc.dto.json.LsParticipantDeserializer;
 import com.github.falydoor.limesurveyrc.dto.json.LsQuestionDeserializer;
 import com.github.falydoor.limesurveyrc.dto.json.LsSurveyDeserializer;
 import com.github.falydoor.limesurveyrc.exception.LimesurveyRCException;
@@ -63,6 +64,7 @@ public class LimesurveyRC {
                 .registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
                 .registerTypeAdapter(LsSurvey.class, new LsSurveyDeserializer())
                 .registerTypeAdapter(LsQuestion.class, new LsQuestionDeserializer())
+                .registerTypeAdapter(LsParticipant.class, new LsParticipantDeserializer())
                 .create();
     }
 
@@ -372,6 +374,21 @@ public class LimesurveyRC {
 
         return gson.fromJson(callRC(new LsApiBody("get_participant_properties", params)), new TypeToken<Map<String, String>>() {
         }.getType());
+    }
+
+    /**
+     * Gets all participants from a survey.
+     *
+     * @param surveyId the survey id of the survey you want the participants
+     * @return the all participants
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
+    public Stream<LsParticipant> getAllParticipants(int surveyId) throws LimesurveyRCException {
+        LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
+        List<LsParticipant> participants = gson.fromJson(callRC(new LsApiBody("list_participants", params)), new TypeToken<List<LsParticipant>>() {
+        }.getType());
+
+        return participants.stream();
     }
 
     private LsApiBody.LsApiParams getParamsWithKey(int surveyId) throws LimesurveyRCException {
