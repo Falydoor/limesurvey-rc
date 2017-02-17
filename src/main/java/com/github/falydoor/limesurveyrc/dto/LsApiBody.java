@@ -65,218 +65,98 @@ public class LsApiBody {
         @SerializedName("aTokenProperties")
         private List<String> tokenProperties;
 
-        /**
-         * Gets username.
-         *
-         * @return the username
-         */
         public String getUsername() {
             return username;
         }
 
-        /**
-         * Sets username.
-         *
-         * @param username the username
-         */
         public void setUsername(String username) {
             this.username = username;
         }
 
-        /**
-         * Gets password.
-         *
-         * @return the password
-         */
         public String getPassword() {
             return password;
         }
 
-        /**
-         * Sets password.
-         *
-         * @param password the password
-         */
         public void setPassword(String password) {
             this.password = password;
         }
 
-        /**
-         * Gets session key.
-         *
-         * @return the session key
-         */
         public String getSessionKey() {
             return sessionKey;
         }
 
-        /**
-         * Sets session key.
-         *
-         * @param sessionKey the session key
-         */
         public void setSessionKey(String sessionKey) {
             this.sessionKey = sessionKey;
         }
 
-        /**
-         * Gets survey id.
-         *
-         * @return the survey id
-         */
         public Integer getSurveyId() {
             return surveyId;
         }
 
-        /**
-         * Sets survey id.
-         *
-         * @param surveyId the survey id
-         */
         public void setSurveyId(Integer surveyId) {
             this.surveyId = surveyId;
         }
 
-        /**
-         * Gets group id.
-         *
-         * @return the group id
-         */
         public Integer getGroupId() {
             return groupId;
         }
 
-        /**
-         * Sets group id.
-         *
-         * @param groupId the group id
-         */
         public void setGroupId(Integer groupId) {
             this.groupId = groupId;
         }
 
-        /**
-         * Gets survey settings.
-         *
-         * @return the survey settings
-         */
         public List<String> getSurveySettings() {
             return surveySettings;
         }
 
-        /**
-         * Sets survey settings.
-         *
-         * @param surveySettings the survey settings
-         */
         public void setSurveySettings(List<String> surveySettings) {
             this.surveySettings = surveySettings;
         }
 
-        /**
-         * Gets survey locale settings.
-         *
-         * @return the survey locale settings
-         */
         public List<String> getSurveyLocaleSettings() {
             return surveyLocaleSettings;
         }
 
-        /**
-         * Sets survey locale settings.
-         *
-         * @param surveyLocaleSettings the survey locale settings
-         */
         public void setSurveyLocaleSettings(List<String> surveyLocaleSettings) {
             this.surveyLocaleSettings = surveyLocaleSettings;
         }
 
-        /**
-         * Gets response data.
-         *
-         * @return the response data
-         */
         public Map<String, String> getResponseData() {
             return responseData;
         }
 
-        /**
-         * Sets response data.
-         *
-         * @param responseData the response data
-         */
         public void setResponseData(Map<String, String> responseData) {
             this.responseData = responseData;
         }
 
-        /**
-         * Gets question id.
-         *
-         * @return the question id
-         */
         public Integer getQuestionId() {
             return questionId;
         }
 
-        /**
-         * Sets question id.
-         *
-         * @param questionId the question id
-         */
         public void setQuestionId(Integer questionId) {
             this.questionId = questionId;
         }
 
-        /**
-         * Gets question settings.
-         *
-         * @return the question settings
-         */
         public List<String> getQuestionSettings() {
             return questionSettings;
         }
 
-        /**
-         * Sets question settings.
-         *
-         * @param questionSettings the question settings
-         */
         public void setQuestionSettings(List<String> questionSettings) {
             this.questionSettings = questionSettings;
         }
 
-        /**
-         * Gets token query properties.
-         *
-         * @return the token query properties
-         */
         public Map<String, String> getTokenQueryProperties() {
             return tokenQueryProperties;
         }
 
-        /**
-         * Sets token query properties.
-         *
-         * @param tokenQueryProperties the token query properties
-         */
         public void setTokenQueryProperties(Map<String, String> tokenQueryProperties) {
             this.tokenQueryProperties = tokenQueryProperties;
         }
 
-        /**
-         * Gets token properties.
-         *
-         * @return the token properties
-         */
         public List<String> getTokenProperties() {
             return tokenProperties;
         }
 
-        /**
-         * Sets token properties.
-         *
-         * @param tokenProperties the token properties
-         */
         public void setTokenProperties(List<String> tokenProperties) {
             this.tokenProperties = tokenProperties;
         }
