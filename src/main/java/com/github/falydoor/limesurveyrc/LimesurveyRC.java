@@ -11,6 +11,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -117,12 +118,27 @@ public class LimesurveyRC {
      * @throws LimesurveyRCException the limesurvey rc exception
      */
     public int createIncompleteResponse(int surveyId) throws LimesurveyRCException {
+        return createIncompleteResponse(surveyId, null);
+    }
+
+    /**
+     * Create an incomplete response, its field "completed" is set to "N" and the response doesn't have a submitdate.
+     *
+     * @param surveyId the survey id of the survey you want to create the response
+     * @param token    the token used for the response, no token will be set if the value is empty
+     * @return the id of the response
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
+    public int createIncompleteResponse(int surveyId, String token) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
         HashMap<String, String> responseData = new HashMap<>();
         responseData.put("submitdate", "");
         String date = ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME);
         responseData.put("startdate", date);
         responseData.put("datestamp", date);
+        if (StringUtils.isNotEmpty(token)) {
+            responseData.put("token", token);
+        }
         params.setResponseData(responseData);
         return callRC(new LsApiBody("add_response", params)).getAsInt();
     }
