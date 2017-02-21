@@ -385,6 +385,8 @@ public class LimesurveyRC {
      */
     public Stream<LsParticipant> getAllParticipants(int surveyId) throws LimesurveyRCException {
         LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
+        params.setStart(0);
+        params.setLimit(-1);
         List<LsParticipant> participants = gson.fromJson(callRC(new LsApiBody("list_participants", params)), new TypeToken<List<LsParticipant>>() {
         }.getType());
 

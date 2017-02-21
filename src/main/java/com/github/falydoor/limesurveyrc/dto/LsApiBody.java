@@ -66,10 +66,10 @@ public class LsApiBody {
         private List<String> tokenProperties;
 
         @SerializedName("iStart")
-        private int start = 0;
+        private Integer start;
 
         @SerializedName("iLimit")
-        private int limit = -1;
+        private Integer limit;
 
         public String getUsername() {
             return username;
@@ -167,12 +167,20 @@ public class LsApiBody {
             this.tokenProperties = tokenProperties;
         }
 
-        public int getStart() {
+        public Integer getStart() {
             return start;
         }
 
-        public void setStart(int start) {
+        public void setStart(Integer start) {
             this.start = start;
+        }
+
+        public Integer getLimit() {
+            return limit;
+        }
+
+        public void setLimit(Integer limit) {
+            this.limit = limit;
         }
     }
 }
