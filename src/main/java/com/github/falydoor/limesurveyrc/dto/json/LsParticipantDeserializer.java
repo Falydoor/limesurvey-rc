@@ -13,10 +13,42 @@ public class LsParticipantDeserializer implements JsonDeserializer<LsParticipant
     @Override
     public LsParticipant deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         LsParticipant participant = new Gson().fromJson(jsonElement, type);
-        JsonObject participantInfo = jsonElement.getAsJsonObject().getAsJsonObject("participant_info");
-        participant.setEmail(participantInfo.get("email").getAsString());
-        participant.setFirstName(participantInfo.get("firstname").getAsString());
-        participant.setLastName(participantInfo.get("lastname").getAsString());
+        ParticipantInfo participantInfo = new Gson().fromJson(jsonElement.getAsJsonObject().getAsJsonObject("participant_info"), ParticipantInfo.class);
+        participant.setEmail(participantInfo.getEmail());
+        participant.setFirstName(participantInfo.getFirstname());
+        participant.setLastName(participantInfo.getLastname());
         return participant;
+    }
+
+    private class ParticipantInfo {
+        private String email;
+
+        private String firstname;
+
+        private String lastname;
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getFirstname() {
+            return firstname;
+        }
+
+        public void setFirstname(String firstname) {
+            this.firstname = firstname;
+        }
+
+        public String getLastname() {
+            return lastname;
+        }
+
+        public void setLastname(String lastname) {
+            this.lastname = lastname;
+        }
     }
 }
