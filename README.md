@@ -18,7 +18,7 @@ This project is on Maven Central, you just have to add the dependency to your po
 <dependency>
     <groupId>com.github.falydoor</groupId>
     <artifactId>limesurvey-rc</artifactId>
-    <version>0.1</version>
+    <version>0.6</version>
 </dependency>
 ```
 
