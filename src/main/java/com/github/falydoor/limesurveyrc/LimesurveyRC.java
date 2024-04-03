@@ -1,9 +1,11 @@
 package com.github.falydoor.limesurveyrc;
 
 import com.github.falydoor.limesurveyrc.dto.*;
+import com.github.falydoor.limesurveyrc.dto.json.DocumentType;
 import com.github.falydoor.limesurveyrc.dto.json.LocalDateDeserializer;
 import com.github.falydoor.limesurveyrc.dto.json.LsParticipantDeserializer;
 import com.github.falydoor.limesurveyrc.dto.json.LsQuestionDeserializer;
+import com.github.falydoor.limesurveyrc.dto.json.LsResponseDeserializer;
 import com.github.falydoor.limesurveyrc.dto.json.LsSurveyDeserializer;
 import com.github.falydoor.limesurveyrc.exception.LimesurveyRCException;
 import com.google.gson.Gson;
@@ -11,6 +13,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -22,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -66,6 +71,7 @@ public class LimesurveyRC {
                 .registerTypeAdapter(LsSurvey.class, new LsSurveyDeserializer())
                 .registerTypeAdapter(LsQuestion.class, new LsQuestionDeserializer())
                 .registerTypeAdapter(LsParticipant.class, new LsParticipantDeserializer())
+                .registerTypeAdapter(LsResponse.class, new LsResponseDeserializer())
                 .create();
     }
 
@@ -329,6 +335,20 @@ public class LimesurveyRC {
 
         return surveys.stream();
     }
+    
+	public Stream<LsResponse> getResponses(Integer surveyId, DocumentType documentType) throws LimesurveyRCException {
+		LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
+		params.setDocumentType(documentType.getDescription());
+
+		JsonElement result = this.callRC(new LsApiBody("export_responses", params));
+		String resultBase64Decoded = new String(Base64.getDecoder().decode(result.getAsString()),
+				StandardCharsets.UTF_8);
+		result = new JsonParser().parse(resultBase64Decoded).getAsJsonObject().get("responses");
+		List<LsResponse> responses = gson.fromJson(result, new TypeToken<List<LsResponse>>() {
+		}.getType());
+
+		return responses.stream();
+	}
 
     /**
      * Gets language properties from a survey.
