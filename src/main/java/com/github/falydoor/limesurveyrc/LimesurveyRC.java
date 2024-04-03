@@ -1,20 +1,13 @@
 package com.github.falydoor.limesurveyrc;
 
 import com.github.falydoor.limesurveyrc.dto.*;
-import com.github.falydoor.limesurveyrc.dto.json.DocumentType;
-import com.github.falydoor.limesurveyrc.dto.json.LocalDateDeserializer;
-import com.github.falydoor.limesurveyrc.dto.json.LsParticipantDeserializer;
-import com.github.falydoor.limesurveyrc.dto.json.LsQuestionDeserializer;
-import com.github.falydoor.limesurveyrc.dto.json.LsResponseDeserializer;
-import com.github.falydoor.limesurveyrc.dto.json.LsSurveyDeserializer;
+import com.github.falydoor.limesurveyrc.dto.json.*;
 import com.github.falydoor.limesurveyrc.exception.LimesurveyRCException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -335,20 +328,28 @@ public class LimesurveyRC {
 
         return surveys.stream();
     }
-    
-	public Stream<LsResponse> getResponses(Integer surveyId, DocumentType documentType) throws LimesurveyRCException {
-		LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
-		params.setDocumentType(documentType.getDescription());
 
-		JsonElement result = this.callRC(new LsApiBody("export_responses", params));
-		String resultBase64Decoded = new String(Base64.getDecoder().decode(result.getAsString()),
-				StandardCharsets.UTF_8);
-		result = new JsonParser().parse(resultBase64Decoded).getAsJsonObject().get("responses");
-		List<LsResponse> responses = gson.fromJson(result, new TypeToken<List<LsResponse>>() {
-		}.getType());
+    /**
+     * Gets all responses.
+     *
+     * @param surveyId the survey id of the survey you want the responses
+     * @param documentType the document type of the responses
+     * @return a stream of responses
+     * @throws LimesurveyRCException the limesurvey rc exception
+     */
+    public Stream<LsResponse> getResponses(Integer surveyId, DocumentType documentType) throws LimesurveyRCException {
+        LsApiBody.LsApiParams params = getParamsWithKey(surveyId);
+        params.setDocumentType(documentType.getDescription());
 
-		return responses.stream();
-	}
+        JsonElement result = this.callRC(new LsApiBody("export_responses", params));
+        String resultBase64Decoded = new String(Base64.getDecoder().decode(result.getAsString()),
+                StandardCharsets.UTF_8);
+        result = new JsonParser().parse(resultBase64Decoded).getAsJsonObject().get("responses");
+        List<LsResponse> responses = gson.fromJson(result, new TypeToken<List<LsResponse>>() {
+        }.getType());
+
+        return responses.stream();
+    }
 
     /**
      * Gets language properties from a survey.

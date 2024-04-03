@@ -70,7 +70,7 @@ public class LsApiBody {
 
         @SerializedName("iLimit")
         private Integer limit;
-        
+
         @SerializedName("sDocumentType")
         private String documentType;
 
@@ -186,14 +186,14 @@ public class LsApiBody {
             this.limit = limit;
         }
 
-		public String getDocumentType() {
-			return documentType;
-		}
+        public String getDocumentType() {
+            return documentType;
+        }
 
-		public void setDocumentType(String documentType) {
-			this.documentType = documentType;
-		}
-        
-        
+        public void setDocumentType(String documentType) {
+            this.documentType = documentType;
+        }
+
+
     }
 }
